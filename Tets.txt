@@ -1,0 +1,117 @@
+#!/bin/bash
+#
+# Install script by SLM
+#
+
+# Change administrator password (see KeePass)
+#passwd
+
+# Update OS
+sudo apt-get update 
+sudo apt-get upgrade -y
+
+# Time via NTP
+sudo apt-get install -y ntp
+sudo sed -i -e 's/#NTP=/NTP=sntp001.bct.dmz/g' /etc/systemd/timesyncd.conf 
+sudo sed -i -e 's/#FallbackNTP=ntp.ubuntu.com/FallbackNTP=sntp002.bct.dmz/g' /etc/systemd/timesyncd.conf
+
+
+# Java
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install -y oracle-java8-installer
+
+# Install 32bit Java
+sudo apt-get install -y libstdc++6:i386 lib32z1 lib32ncurses5 libxext6:i386 libxrender1:i386 libxtst6:i386 libxi6:i386
+sudo ln -s /usr/bin/update-alternatives /usr/sbin/
+sudo cp /media/$USER/UBUNTU/software/jre1.7.0 -R /usr/lib32/
+sudo chown -R root:root /usr/lib32/jre1.7.0
+sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib32/jre1.7.0/bin/java" 1 
+sudo update-alternatives --config java
+
+# Git
+sudo apt-get install -y git
+
+# IntelliJ
+sudo cp /media/$USER/UBUNTU/software/intellij-idea/idea-IU-145.597.3 -R /opt/
+#sudo /opt/idea-IU-145.597.3/bin/idea.sh
+
+# Maven
+sudo apt-get install -y maven
+
+# Docker
+sudo apt-get install -y apt-transport-https ca-certificates
+sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' > /etc/apt/sources.list.d/docker.list | sudo tee /etc/apt/sources.list.d/docker.list
+sudo apt-get update
+sudo apt-cache policy docker-engine
+sudo apt-get install -y docker-engine
+sudo apt-get install -y linux-image-extra-$(uname -r)
+sudo service docker start
+sudo systemctl enable docker
+
+# MySQL Workbench
+sudo apt-get install -y mysql-workbench
+
+# Slack
+sudo dpkg -i /media/$USER/UBUNTU/software/slack/slack-desktop-*-amd64.deb
+
+# Chrome 64-bit only
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+sudo sh -c "echo deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main > /etc/apt/sources.list.d/google-chrome.list" | apt-get update
+sudo apt-get install -y google-chrome-stable
+
+# SoapUI
+sudo cp /media/$USER/UBUNTU/software/soapui/SoapUI-x64-5.2.1.sh /tmp/
+sudo chmod +x /tmp/SoapUI-x64-5.2.1.sh
+sudo /tmp/SoapUI-x64-5.2.1.sh
+sudo rm -f /tmp/SoapUI-x64-5.2.1.sh
+
+# Teamviewer
+sudo apt-get install -y gcc-6-base:i386 libasound2:i386 libc6:i386 libdbus-1-3:i386 libexpat1:i386 libfontconfig1:i386 libfreetype6:i386 libgcc1:i386 libgcrypt20:i386 libgpg-error0:i386 libice6:i386 libjpeg62:i386 liblzma5:i386 libpcre3:i386 libpng12-0:i386 libselinux1:i386 libsm6:i386 libsystemd0:i386 libuuid1:i386 libx11-6:i386 libxau6:i386 libxcb1:i386 libxdamage1:i386 libxdmcp6:i386 libxext6:i386 libxfixes3:i386 libxinerama1:i386 libxrandr2:i386 libxrender1:i386 libxtst6:i386 zlib1g:i386
+#sudo dpkg -i /media/$USER/UBUNTU/software/teamviewer/teamviewer_11.0.57095_i386.deb
+wget https://download.teamviewer.com/download/teamviewer_i386.deb
+sudo dpkg -i teamviewer_i386.deb
+sudo rm teamviewer_i386.deb
+
+# VMware Horizon Client 4.0.x
+sudo cp /media/$USER/UBUNTU/software/vmware-horizon-client/VMware-Horizon-Client-4.0.1-3698616.x64.bundle /tmp/
+sudo chmod +x /tmp/VMware-Horizon-Client-4.0.1-3698616.x64.bundle
+sudo /tmp/VMware-Horizon-Client-4.0.1-3698616.x64.bundle
+sudo rm -f /tmp/VMware-Horizon-Client-4.0.1-3698616.x64.bundle
+
+# VMware Workstation 9.x (Werkt niet, ubuntu crasht ...)
+#sudo cp /media/$USER/UBUNTU/software/vmware-workstation-9/VMware-Workstation-Full-9.0.4-1945795.x86_64.bundle /tmp/
+#sudo chmod +x /tmp/VMware-Workstation-Full-9.0.4-1945795.x86_64.bundle
+#sudo /tmp/VMware-Workstation-Full-9.0.4-1945795.x86_64.bundle
+#sudo rm -f /tmp/VMware-Workstation-Full-9.0.4-1945795.x86_64.bundle
+
+# Juniper VPN Client
+# Not required
+
+#
+# Laat Ubuntu zien wie de baas is;
+#
+sudo cp /etc/default/grub /etc/default/grub.bak
+sudo sed -i 's/GRUB_DEFAULT=0/GRUB_DEFAULT=saved/g' /etc/default/grub
+sudo sed -i 's/GRUB_TIMEOUT=10/GRUB_TIMEOUT=5/g' /etc/default/grub
+sudo grub-set-default 2
+sudo update-grub
+
+
+# Cleanup
+sudo rm /var/crash/*
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get autoremove -y
+
+#
+# Todo after installation:
+#
+# - Teamviewer licentie:
+# 
+# 09-31204-218349-587596
+#
+
+
+
